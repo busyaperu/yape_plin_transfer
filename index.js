@@ -39,12 +39,12 @@ app.post('/webhook', async (req, res) => {
             const imageUrl = data.publicUrl;
             console.log('URL de la nueva imagen:', imageUrl);
 
-            // Ejecutar el archivo Jupyter Notebook con la URL como argumento
-            const command = `jupyter nbconvert --to notebook --execute Untitled4.ipynb --output Untitled4-output.ipynb --ExecutePreprocessor.kernel_name=python3 --ExecutePreprocessor.arguments="['${imageUrl}']"`;
+            // Ejecutar el archivo aplicacionocr.py con la URL como argumento
+            const command = `python3 aplicacionocr.py '${imageUrl}'`;
 
             exec(command, (error, stdout, stderr) => {
                 if (error) {
-                    console.error('Error al ejecutar el notebook:', error);
+                    console.error('Error al ejecutar el script:', error);
                     res.status(500).send('Error al procesar la imagen');
                     return;
                 }
@@ -68,3 +68,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
+

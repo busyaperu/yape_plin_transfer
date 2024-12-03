@@ -1,0 +1,4 @@
+supabase
+pillow
+pytesseract
+openai

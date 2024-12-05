@@ -1,8 +1,9 @@
-import openai
-import pytesseract
-from PIL import Image
+import openai # type: ignore
+import pytesseract # type: ignore
+from PIL import Image # type: ignore
 import os
-from supabase import create_client, Client
+from supabase import create_client, Client # type: ignore
+from firebase_admin import initialize_app, storage, get_app # type: ignore
 
 
 # Configuración de la conexión a Supabase
@@ -12,111 +13,55 @@ key = os.getenv('SUPABASE_API_KEY')  # Variable de entorno para la clave de API 
 # Crear cliente de Supabase
 supabase: Client = create_client(url, key)
 
+# Inicializar Firebase
+try:
+    get_app()  # Intenta obtener la aplicación de Firebase existente
+    print("Firebase app already initialized.")
+except ValueError:
+    initialize_app()  # Inicializa la aplicación solo si no existe
+    print("Firebase app initialized.")
 
-# Configuration
-url = os.getenv('SUPABASE_URL')  # Variable de entorno para URL de Supabase
-key = os.getenv('SUPABASE_API_KEY')  # Variable de entorno para la clave de API de Supabase
+bucket_name = 'yapeplin-28d79.appspot.com' # Replace with your bucket name
 
-bucket_name = 'yape_plin' # Replace with your bucket name
-
-# Create Supabase client
-supabase: Client = create_client(url, key)
-
-
-def process_images_from_bucket():
-    # Get the list of files in the bucket
+def process_images_from_firebase():
+    # Obtener la lista de archivos en Firebase Storage
     try:
-        data = supabase.storage.from_(bucket_name).list()
-        if data:
-          for file_info in data:
-              file_name = file_info['name']
-              # Download the file from Supabase storage
-              try:
-                #path = os.path.join('/tmp', file_name)
-                path = f'/tmp/{file_name}'
-                with open(path, 'wb') as f:
-                    data = supabase.storage.from_(bucket_name).download(file_name)
-                    f.write(data)
-
-
-                # Perform OCR
+        bucket = storage.bucket()  # Se debe especificar el nombre del bucket aquí si es necesario
+        blobs = bucket.list_blobs(prefix=bucket_name)  # Usamos el prefijo del nombre del bucket
+        if blobs:
+            for blob in blobs:
+                file_name = blob.name
+                # Descargar el archivo desde Firebase Storage
                 try:
-                  img = Image.open(path)
-                  text = pytesseract.image_to_string(img)
-                  print(f"Text extracted from {file_name}:\n{text}")
+                    path = f'/tmp/{file_name}'
+                    blob.download_to_filename(path)
 
-                  # You can further process the extracted text here
+                    # Perform OCR
+                    try:
+                        img = Image.open(path)
+                        text = pytesseract.image_to_string(img)
+                        print(f"Text extracted from {file_name}:\n{text}")
+
+                    except Exception as e:
+                        print(f"Error during OCR processing for {file_name}: {e}")
+                    finally:
+                        os.remove(path)  # Remove downloaded file after processing
+
                 except Exception as e:
-                  print(f"Error during OCR processing for {file_name}: {e}")
-                finally:
-                    os.remove(path) # Remove downloaded file after processing
-
-              except Exception as e:
-                print(f"Error downloading {file_name} from Supabase: {e}")
-
+                    print(f"Error downloading {file_name} from Firebase Storage: {e}")
         else:
-          print("No files found in the bucket.")
+            print("No files found in the bucket.")
+    
     except Exception as e:
         print(f"An error occurred: {e}")
 
-
 # Call the function to process images
-process_images_from_bucket()
-
-
-
-# Configuración de la conexión a Supabase
-url = os.getenv('SUPABASE_URL')  # Variable de entorno para URL de Supabase
-key = os.getenv('SUPABASE_API_KEY')  # Variable de entorno para la clave de API de Supabase
-
-bucket_name = 'yape_plin'  # Reemplaza con tu bucket de Supabase
-
-# Crear cliente de Supabase
-supabase: Client = create_client(url, key)
-
-def process_image_and_send_to_supabase(image_name):
-    # Descargar archivo desde Supabase
-    try:
-        # Descargar el archivo
-        path = f'/tmp/{image_name}'
-        with open(path, 'wb') as f:
-            data = supabase.storage.from_(bucket_name).download(image_name)
-            f.write(data)
-
-        # Procesar la imagen con OCR
-        try:
-            img = Image.open(path)
-            text = pytesseract.image_to_string(img)
-            print(f"Text extracted from {image_name}:\n{text}")
-
-            # Eliminar el archivo descargado
-            os.remove(path)
-
-            # Aquí puedes agregar lógica para procesar el texto y enviarlo a Supabase
-
-        except Exception as e:
-            print(f"Error during OCR processing for {image_name}: {e}")
-
-    except Exception as e:
-        print(f"Error downloading {image_name} from Supabase: {e}")
-
-# Llamada para procesar la imagen
-# Llamada para procesar las imágenes del bucket con plin_jose_hijo.jpeg
-
-process_image_and_send_to_supabase("plin_jose_hijo.jpeg")
+process_images_from_bucket() # type: ignore
 
 
 
 # Configuración de la API de OpenAI
 openai.api_key = os.getenv('OPENAI_API_KEY')
-
-# Configuración de Supabase
-url = os.getenv('SUPABASE_URL')  # Variable de entorno para URL de Supabase
-key = os.getenv('SUPABASE_API_KEY')  # Variable de entorno para la clave de API de Supabase
-
-supabase: Client = create_client(url, key)
-
-bucket_name = 'yape_plin'  # Nombre del bucket en Supabase
 
 # Prompt único para Yape y Plin
 prompt = """

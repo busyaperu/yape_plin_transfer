@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
             if (
                 payload.event_type === 'INSERT' &&
-                payload.record.bucket_id === 'yape_plin'
+                payload.record.bucket_id === 'yapeplin-28d79' // o el nombre de tu bucket en Firebase Storage
             ) {
                 const fileName = payload.record.name; // Nombre del archivo en el bucket
 

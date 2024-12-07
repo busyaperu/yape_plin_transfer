@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.46.2",
     "express": "^4.21.1"

@@ -35,21 +35,24 @@ export default async function handler(req, res) {
                 const imageUrl = data.publicUrl;
                 console.log('URL de la nueva imagen:', imageUrl);
 
-                // Ejecutar el archivo aplicacionocr.py con la URL como argumento
-                const command = `python3 aplicacionocr.py '${imageUrl}'`;
-
-                exec(command, (error, stdout, stderr) => {
-                    if (error) {
-                        console.error('Error al ejecutar el script:', error);
-                        res.status(500).json({ message: 'Error al procesar la imagen' });
-                        return;
-                    }
-
-                    console.log('Salida del comando:', stdout);
-                    console.error('Errores del comando:', stderr);
-
-                    res.status(200).json({ message: 'Imagen procesada con éxito' });
+                // Llamar a la función Python mediante HTTP
+                const pythonResponse = await fetch('https://orc-funcion.vercel.app/api/webhook_yape_plin_ocr', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageUrl })
                 });
+
+                if (!pythonResponse.ok) {
+                    const errorDetails = await pythonResponse.text();
+                    console.error('Error desde el script Python:', errorDetails);
+                    res.status(500).json({ message: 'Error al procesar la imagen con OCR' });
+                    return;
+                }
+
+                const ocrResult = await pythonResponse.json();
+                console.log('Resultado del OCR:', ocrResult);
+
+                res.status(200).json({ message: 'Imagen procesada con éxito', data: ocrResult });
             } else {
                 res.status(400).json({ message: 'Evento no relevante para el bucket yape_plin' });
             }

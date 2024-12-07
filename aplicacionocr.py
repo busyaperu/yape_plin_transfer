@@ -36,7 +36,7 @@ def process_images_from_firebase():
                     path = f'/tmp/{file_name}'
                     blob.download_to_filename(path)
 
-                    # Perform OCR
+                    # Perform OCR_detction
                     try:
                         img = Image.open(path)
                         text = pytesseract.image_to_string(img)

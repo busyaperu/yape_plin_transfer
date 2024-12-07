@@ -1,5 +1,6 @@
 // api/webhook_yape_plin_ocr.js
 import { createClient } from '@supabase/supabase-js';
+import express from 'express';
 import { exec } from 'child_process';
 
 // Inicializar Supabase

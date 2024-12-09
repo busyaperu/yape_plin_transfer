@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
                 console.log('URL de la nueva imagen:', imageUrl);
 
                 // Llamar a la función Python mediante HTTP
-                const pythonResponse = await fetch('https://orc-funcion.vercel.app/api/webhook_yape_plin_ocr', {
+                const pythonResponse = await fetch('https://worker-production-5a61.up.railway.app/api/webhook_yape_plin_ocr', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ imageUrl })

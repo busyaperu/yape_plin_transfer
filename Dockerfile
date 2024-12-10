@@ -7,7 +7,7 @@ ENV VAR3=${VAR3}
 ENV VAR4=${VAR4}
 
 WORKDIR /app
-COPY . .
+COPY api/ /app/api/
 
 # Instalar dependencias
 RUN pip install -r requirements.txt
@@ -17,4 +17,3 @@ RUN ls -alh /app  # Verifica si el archivo se copia correctamente
 
 # Comando para ejecutar el archivo de Python
 CMD ["python3", "/app/api/aplicacion_yape_plin.py"]
-

@@ -15,5 +15,7 @@ COPY api/ ./api/
 # Instalar dependencias
 RUN pip install -r requirements.txt
 
-# Comando para ejecutar la aplicación
-CMD ["python3", "./api/aplicacion_yape_plin.py"]
+# Modificar el comando para ver las variables
+CMD echo "SUPABASE_URL: $SUPABASE_URL" && \
+    echo "SUPABASE_API_KEY: $SUPABASE_API_KEY" && \
+    python3 ./api/aplicacion_yape_plin.py

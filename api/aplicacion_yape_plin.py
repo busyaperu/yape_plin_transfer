@@ -1,6 +1,7 @@
 # Importar dependencias
 from supabase import create_client, Client
 import os
+import openai
 
 url = os.environ.get('SUPABASE_URL')
 key = os.environ.get('SUPABASE_API_KEY')

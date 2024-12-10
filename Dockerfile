@@ -6,21 +6,30 @@ ENV VAR2=${VAR2}
 ENV VAR3=${VAR3}
 ENV VAR4=${VAR4}
 
-# Establecer el directorio de trabajo
 WORKDIR /app
+
+# Verificar directorio inicial
+RUN pwd && echo "=== Contenido inicial ===" && ls -la
 
 # Copiar requirements.txt y instalar dependencias
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Copiar solo la carpeta api y su contenido
-COPY api/ ./api/
+# Copiar específicamente la carpeta api
+COPY api/ /app/api/
 
-# Verificar la estructura de archivos (para debugging)
-RUN echo "=== Contenido de /app ===" && \
+# Verificaciones extensivas
+RUN echo "=== Contenido después de COPY ===" && \
     ls -la /app && \
     echo "=== Contenido de /app/api ===" && \
-    ls -la /app/api
+    ls -la /app/api && \
+    echo "=== Ubicación actual ===" && \
+    pwd && \
+    echo "=== Árbol completo ===" && \
+    find /app
+
+# Verificar el archivo específico
+RUN ls -la /app/api/aplicacion_yape_plin.py || echo "El archivo no existe"
 
 # Ejecutar la aplicación
-CMD ["python3", "./api/aplicacion_yape_plin.py"]
+CMD ["python3", "/app/api/aplicacion_yape_plin.py"]

@@ -1,7 +1,12 @@
 # Importar dependencias
-from supabase import create_client, Client
-import os
+# Todas las importaciones al inicio
 import openai
+import os
+from PIL import Image
+import pytesseract
+from supabase import create_client, Client
+
+# Resto del código...
 
 url = os.environ.get('SUPABASE_URL')
 key = os.environ.get('SUPABASE_API_KEY')
@@ -51,10 +56,7 @@ def process_images_from_bucket():
 # Call the function to process images
 process_images_from_bucket()
 
-import os
-from PIL import Image
-import pytesseract
-from supabase import create_client, Client
+
 
 # Configuración de la conexión a Supabase
 bucket_name = 'yape_plin'  # Reemplaza con tu bucket de Supabase
@@ -90,11 +92,6 @@ def process_image_and_send_to_supabase(image_name):
 
 process_image_and_send_to_supabase("plin_jose_hijo.jpeg")
 
-import openai
-import pytesseract
-from PIL import Image
-import os
-from supabase import create_client, Client
 
 # Configuración de la API de OpenAI
 openai.api_key = 'OPENAI_API_KEY'

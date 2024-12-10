@@ -1,17 +1,13 @@
 # Importar dependencias
-# Todas las importaciones al inicio
 import openai
 import os
 from PIL import Image
 import pytesseract
 from supabase import create_client, Client
 
-# Resto del código...
-
 url = os.environ.get('SUPABASE_URL')
 key = os.environ.get('SUPABASE_API_KEY')
 openai.api_key = os.environ.get('OPENAI_API_KEY')
-
 # Crear cliente de Supabase
 supabase: Client = create_client(url, key)
 

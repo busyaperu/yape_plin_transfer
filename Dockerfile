@@ -17,8 +17,14 @@ RUN pip install -r requirements.txt
 # Copiar el resto del código
 COPY ./api /app/api
 
-# Verificar que el archivo se copie correctamente
-RUN ls -alh /app/api
+# Agregar comandos de debug
+RUN echo "Contenido del directorio /app:"
+RUN ls -la /app
+RUN echo "Contenido del directorio /app/api:"
+RUN ls -la /app/api
 
-# Comando para ejecutar el archivo de Python
-CMD ["python3", "/app/api/aplicacion_yape_plin.py"]
+# Dar permisos de ejecución al script
+RUN chmod +x /app/api/aplicacion_yape_plin.py
+
+# Comando para ejecutar el archivo de Python con logs
+CMD ["sh", "-c", "echo 'Iniciando aplicación...' && python3 /app/api/aplicacion_yape_plin.py"]

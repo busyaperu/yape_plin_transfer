@@ -16,5 +16,5 @@ RUN pip install -r requirements.txt
 RUN ls -alh /app  # Verifica si el archivo se copia correctamente
 
 # Comando para ejecutar el archivo de Python
-CMD ["python3", "/app/aplicacion_yape_plin.py"]
+CMD ["python3", "/app/api/aplicacion_yape_plin.py"]
 
